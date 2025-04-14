@@ -1,0 +1,62 @@
+cadenaSinCerrar = "hola
+% Declaraciones
+video1:Video = load("video1.mp4")
+playlist1:PlayList = [video1, video2]
+contador:Int = 10
+tiempo:Time = 0000.100.30
+tiempooo:Time = 00:00:30
+nombre:String = "Mi video"
+esValido:Bool = true
+
+// Asignaciones
+video1 = speed(video1, 0.5)
+video2 = clip(video1, 00.00.05, 00.00.10)
+video3 = video1 + video2
+video4 = video2 - 00.00.10
+duracion:Time = duration(video1)
+pixeles:Int = video1->pixels_ancho
+formato:String = video1->Format
+
+// Operaciones aritméticas
+a = 1 + 2
+b = 4 - 3
+c = 5 * 2
+d = 8 / 2
+e = a >> b
+
+// Condicionales
+if (a eq b) then
+    print("Son iguales")
+end
+
+if (a neq b) then
+    print("Son diferentes")
+end
+
+if (contador > 5) then
+    print("Contador mayor que 5")
+end
+
+if (duracion < 00.20.00) then
+    print("Duración menor")
+end
+
+// Bucles
+replay (clip in playlist1) then
+    print("Reproduciendo")
+end
+
+replay (i in 3) start
+    print("Iteración")
+end
+
+// Comentarios
+// Este es un comentario valido
+// otro comentario
+
+// Errores lexicos
+$invalido;
+@otroError
+video%extranio
+cadenaSinCerrar = "hola"
+number:Int = -100;

@@ -1,0 +1,3 @@
+D:/Projects/MyVideoLanguage/CPP-Compiler/cmake-build-debug/CMakeFiles/CPP_Compiler.dir
+D:/Projects/MyVideoLanguage/CPP-Compiler/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/Projects/MyVideoLanguage/CPP-Compiler/cmake-build-debug/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,20 @@
+# ninja log v6
+1	847	7662130030700434	CMakeFiles/CPP_Compiler.dir/main.cpp.obj	9af85cf31c1a090b
+6	1084	7662130030745570	CMakeFiles/CPP_Compiler.dir/Scanner.cpp.obj	a1f605b31be39c87
+1084	1473	7662130041533547	CPP_Compiler.exe	b868db7d501bdf2e
+37	801	7662130155576340	CMakeFiles/CPP_Compiler.dir/main.cpp.obj	9af85cf31c1a090b
+801	934	7662130163212368	CPP_Compiler.exe	b868db7d501bdf2e
+9	750	7662151387445745	CMakeFiles/CPP_Compiler.dir/Scanner.cpp.obj	a1f605b31be39c87
+4	3131	7662151387387557	CMakeFiles/CPP_Compiler.dir/main.cpp.obj	9af85cf31c1a090b
+3132	4486	7662151418670622	CPP_Compiler.exe	b868db7d501bdf2e
+4	3098	7662152116170799	CMakeFiles/CPP_Compiler.dir/main.cpp.obj	9af85cf31c1a090b
+3098	4477	7662152147099252	CPP_Compiler.exe	b868db7d501bdf2e
+16	2931	7662152580518732	CMakeFiles/CPP_Compiler.dir/main.cpp.obj	9af85cf31c1a090b
+2932	4268	7662152609678173	CPP_Compiler.exe	b868db7d501bdf2e
+4	2781	7662153488184956	CMakeFiles/CPP_Compiler.dir/main.cpp.obj	9af85cf31c1a090b
+2781	4094	7662153515962097	CPP_Compiler.exe	b868db7d501bdf2e
+52	996	7662204975286039	CMakeFiles/CPP_Compiler.dir/main.cpp.obj	9af85cf31c1a090b
+997	1341	7662204984733473	CPP_Compiler.exe	b868db7d501bdf2e
+51	863	7663454733177272	CMakeFiles/CPP_Compiler.dir/Scanner.cpp.obj	a1f605b31be39c87
+47	957	7663454733135597	CMakeFiles/CPP_Compiler.dir/main.cpp.obj	9af85cf31c1a090b
+957	1293	7663454742244228	CPP_Compiler.exe	b868db7d501bdf2e
