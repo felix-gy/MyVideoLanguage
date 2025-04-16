@@ -31,7 +31,9 @@ private:
         {"Int", "TYPE_INT"}, {"Time", "TYPE_TIME"},
         {"String", "TYPE_STRING"}, {"Bool", "TYPE_BOOL"},
         {"eq", "OP_EQ"}, {"neq", "OP_NEQ"},
-        {"true", "BOOL_TRUE"}, {"false", "BOOL_FALSE"}
+        {"true", "BOOL_TRUE"}, {"false", "BOOL_FALSE"},
+        {"WResolution", "PIXEL_ANCHO"}, {"HResolution","PIXEL_ALTO"},
+        {"add", "ADD_IN_LIST"}, {"remove", "REMOVE_OF_LIST"}
     };
 
     unordered_map<string, string> operatorTypes = {
@@ -39,14 +41,13 @@ private:
         {"*", "MUL_OP"}, {"/", "DIV_OP"},
         {"=", "ASSIGN_OP"}, {":", "TYPE_ASSIGN"},
         {">", "GT_OP"}, {"<", "LT_OP"},
-        {">=", "GTE_OP"}, {"<=", "LTE_OP"},
         {">>", "SHIFT_RIGHT_OP"}, {"<<", "SHIFT_LEFT_OP"},
         {",", "COMMA"}, {"(", "OPEN_PAR"}, {")", "CLOSE_PAR"},
         {"[", "OPEN_BRACKET"}, {"]", "CLOSE_BRACKET"},
         {"\"", "QUOTE"}
     };
 
-    unordered_set<string> doubleCharOps = { ">>", "<<", ">=", "<=", "==" };
+    unordered_set<string> doubleCharOps = { ">>"};
     unordered_set<char> singleCharOps = {
         '+', '-', '*', '/', '=', '<', '>', ':', ',', '(', ')', '[', ']', '"'
     };

@@ -1,4 +1,15 @@
-cadenaSinCerrar = "hola
+video1:Video = speed(video1, 2)
+w_pixels:Int = WResolution(video)
+h_pixels:Int = HResolution(video)
+if(a eq b)then
+	video1 = speed(video1, 2)
+end
+
+%Eliminar video de una lista
+Lista1:Playlist = [a,B]
+add(video1, 0,Lista1)
+remove(0, Playlist)
+
 % Declaraciones
 video1:Video = load("video1.mp4")
 playlist1:PlayList = [video1, video2]
@@ -8,7 +19,7 @@ tiempooo:Time = 00:00:30
 nombre:String = "Mi video"
 esValido:Bool = true
 
-// Asignaciones
+% Asignaciones
 video1 = speed(video1, 0.5)
 video2 = clip(video1, 00.00.05, 00.00.10)
 video3 = video1 + video2
@@ -17,14 +28,14 @@ duracion:Time = duration(video1)
 pixeles:Int = video1->pixels_ancho
 formato:String = video1->Format
 
-// Operaciones aritméticas
+% Operaciones aritméticas
 a = 1 + 2
 b = 4 - 3
 c = 5 * 2
 d = 8 / 2
 e = a >> b
 
-// Condicionales
+% Condicionales
 if (a eq b) then
     print("Son iguales")
 end
@@ -41,7 +52,7 @@ if (duracion < 00.20.00) then
     print("Duración menor")
 end
 
-// Bucles
+% Bucles
 replay (clip in playlist1) then
     print("Reproduciendo")
 end
@@ -50,13 +61,13 @@ replay (i in 3) start
     print("Iteración")
 end
 
-// Comentarios
-// Este es un comentario valido
-// otro comentario
+% Comentarios
+% Este es un comentario valido
+% otro comentario
 
-// Errores lexicos
+% Errores lexicos
 $invalido;
 @otroError
 video%extranio
-cadenaSinCerrar = "hola"
+cadenaSinCerrar = "hola
 number:Int = -100;

@@ -1,7 +1,0 @@
-video1:Video = load("video1.mp4")
-if (a eq b) then
-    video1 = speed(video1, 0.5)
-end
-// Este es un comentario
-video2 = video1 >> video3
-$invalido$

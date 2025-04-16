@@ -113,9 +113,16 @@ void Scanner::printToken(const Token& token)
         "OPERATOR", "DELIMITER", "COMMENT", "ERROR", "EOP"
     };
 
-    cout << "DEBUG SCAN - " << TokenNames[token.type]
-        << " [ " << token.value << " ] (" << token.specificType
-        << ") found at (" << token.line << ":" << token.col << ")\n";
+    if(TokenNames[token.type] == "ERROR")
+    {
+        cout<<TokenNames[token.type]<< " [ " << token.value << " ] (" << token.specificType
+            << ") found at (" << token.line << ":" << token.col << ")\n";
+    }
+    else {
+
+        cout << "S - " << " [ " << token.value << " ] (" << token.specificType
+            << ") found at (" << token.line << ":" << token.col << ")\n";
+    }
 }
 
 int Scanner::getErrorCount() const
