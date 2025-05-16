@@ -1,0 +1,32 @@
+Program : $
+StmtList : end & $
+StmtList' : end & $
+Stmt : ID & if & replay & print & export & append & remove & end & $
+StmtDA : ID & if & replay & print & export & append & remove & end & $
+StmtDA' : ID & if & replay & print & export & append & remove & end & $
+Decl : ID & if & replay & print & export & append & remove & end & $
+Assign : ID & if & replay & print & export & append & remove & end & $
+IfStmt : ID & if & replay & print & export & append & remove & end & $
+ForStmt : )
+IterSource : ID & if & replay & print & export & append & remove & end & $
+PrintStmt : ID & if & replay & print & export & append & remove & end & $
+ExportStmt : ID & if & replay & print & export & append & remove & end & $
+FunStmt : =
+Type : ; & ) & ,
+Expr : )
+CondExpr : ; & ) & ,
+RelExpr : ; & ) & ,
+RelExpr' : ; & > & < & eq & neq & ) & ,
+AddExpr : ; & > & < & eq & neq & ) & ,
+AddExpr' : ; & > & < & eq & neq & + & - & ) & ,
+TransExpr : ; & > & < & eq & neq & + & - & ) & ,
+TransExpr' : ; & > & < & eq & neq & + & - & >> & ) & ,
+ConcatExpr : ; & > & < & eq & neq & + & - & >> & ) & ,
+ConcatExpr' : ) & > & < & eq & neq & ; & + & - & >> & ++ & ,
+PrimExpr : ) & > & < & eq & neq & ; & + & - & >> & ++ & ,
+FuncCall : ]
+ListLit : ]
+IDList : ,
+IDList' : ID & INT_LITERAL & TIME_LITERAL & STRING_LITERAL & ( & load & duration & speed & WResolution & HResolution & Format & clip & [
+CompOp : )
+Number :

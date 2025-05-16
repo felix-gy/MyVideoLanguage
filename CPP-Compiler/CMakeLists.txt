@@ -6,4 +6,6 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(CPP_Compiler main.cpp
         Scanner.cpp
         Scanner.h
-        Token.h)
+        Token.h
+        Parser.cpp
+        Parser.h)

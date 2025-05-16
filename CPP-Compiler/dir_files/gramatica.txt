@@ -1,0 +1,66 @@
+0 : Program : StmtList
+1 : StmtList : Stmt StmtList'
+2 : StmtList' : Stmt StmtList'
+3 : StmtList' : E
+4 : Stmt : StmtDA
+5 : Stmt : IfStmt
+6 : Stmt : ForStmt
+7 : Stmt : PrintStmt
+8 : Stmt : ExportStmt
+9 : Stmt : FunStmt
+10 : StmtDA : ID StmtDA'
+11 : StmtDA' : Decl
+12 : StmtDA' : Assign
+13 : Decl : : Type = Expr ;
+14 : Assign : = Expr ;
+15 : IfStmt : if ( CondExpr ) then StmtList end
+16 : ForStmt : replay ( ID in IterSource ) then StmtList end
+17 : IterSource : ID
+18 : IterSource : INT_LITERAL
+19 : PrintStmt : print ( STRING_LITERAL ) ;
+20 : ExportStmt : export ( ID , STRING_LITERAL ) ;
+21 : FunStmt : append ( ID , ID ) ;
+22 : FunStmt : remove ( ID ) ;
+23 : Type : Video24 : Type : Playlist
+25 : Type : Int
+26 : Type : Time
+27 : Type : String
+28 : Type : Bool
+29 : Expr : RelExpr
+30 : CondExpr : PrimExpr CompOp PrimExpr
+31 : RelExpr : AddExpr RelExpr'
+32 : RelExpr' : CompOp AddExpr
+33 : RelExpr' : E
+34 : AddExpr : TransExpr AddExpr'
+35 : AddExpr' : + TransExpr AddExpr'
+36 : AddExpr' : - TransExpr AddExpr'
+37 : AddExpr' : E
+38 : TransExpr : ConcatExpr TransExpr'
+39 : TransExpr' : >> ConcatExpr TransExpr'
+40 : TransExpr' : E
+41 : ConcatExpr : PrimExpr ConcatExpr'
+42 : ConcatExpr' : ++ PrimExpr ConcatExpr'
+43 : ConcatExpr' : E
+44 : PrimExpr : ID
+45 : PrimExpr : INT_LITERAL
+46 : PrimExpr : TIME_LITERAL
+47 : PrimExpr : STRING_LITERAL
+48 : PrimExpr : ( Expr )
+49 : PrimExpr : FuncCall
+50 : PrimExpr : ListLit
+51 : FuncCall : load ( STRING_LITERAL )
+52 : FuncCall : duration ( ID )
+53 : FuncCall : speed ( ID , Number )
+54 : FuncCall : WResolution ( ID )
+55 : FuncCall : HResolution ( ID )
+56 : FuncCall : Format ( ID )
+57 : FuncCall : clip ( ID , Expr , Expr )
+58 : ListLit : [ IDList ]
+59 : IDList : ID IDList'
+60 : IDList' : , ID IDList'
+61 : IDList' : E
+62 : CompOp : >
+63 : CompOp : <
+64 : CompOp : eq
+65 : CompOp : neq
+66 : Number : INT_LITERAL

@@ -48,7 +48,7 @@ if (contador > 5) then
     print("Contador mayor que 5")
 end
 
-if (duracion < 00.20.00) then
+if (duracion < 00.20) then
     print("Duración menor")
 end
 
@@ -60,7 +60,7 @@ end
 replay (i in 3) start
     print("Iteración")
 end
-
+ç
 % Comentarios
 % Este es un comentario valido
 % otro comentario

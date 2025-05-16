@@ -1,0 +1,32 @@
+Program : ID & if & replay & print & export & append & remove
+StmtList : ID & if & replay & print & export & append & remove
+StmtList' : ID & if & replay & print & export & append & remove
+Stmt : ID & if & replay & print & export & append & remove
+StmtDA : ID
+StmtDA' : : & =
+Decl : :
+Assign : =
+IfStmt : if
+ForStmt : replay
+IterSource : ID & INT_LITERAL
+PrintStmt : print
+ExportStmt : export
+FunStmt : append & remove
+Type : Video & Playlist & Int & Time & String & Bool
+Expr : ID & INT_LITERAL & TIME_LITERAL & STRING_LITERAL & ( & load & duration & speed & WResolution & HResolution & Format & clip & [
+CondExpr : ID & INT_LITERAL & TIME_LITERAL & STRING_LITERAL & ( & load & duration & speed & WResolution & HResolution & Format & clip & [
+RelExpr : ID & INT_LITERAL & TIME_LITERAL & STRING_LITERAL & ( & load & duration & speed & WResolution & HResolution & Format & clip & [
+RelExpr' : > & < & eq & neq
+AddExpr : ID & INT_LITERAL & TIME_LITERAL & STRING_LITERAL & ( & load & duration & speed & WResolution & HResolution & Format & clip & [
+AddExpr' : + & -
+TransExpr : ID & INT_LITERAL & TIME_LITERAL & STRING_LITERAL & ( & load & duration & speed & WResolution & HResolution & Format & clip & [
+TransExpr' : >>
+ConcatExpr : ID & INT_LITERAL & TIME_LITERAL & STRING_LITERAL & ( & load & duration & speed & WResolution & HResolution & Format & clip & [
+ConcatExpr' : ++
+PrimExpr : ID & INT_LITERAL & TIME_LITERAL & STRING_LITERAL & ( & load & duration & speed & WResolution & HResolution & Format & clip & [
+FuncCall : load & duration & speed & WResolution & HResolution & Format & clip
+ListLit : [
+IDList : ID
+IDList' : ,
+CompOp : > & < & eq & neq
+Number : INT_LITERAL
