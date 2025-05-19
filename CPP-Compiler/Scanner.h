@@ -44,12 +44,12 @@ private:
         {">>", "SHIFT_RIGHT_OP"}, {"<<", "SHIFT_LEFT_OP"},
         {",", "COMMA"}, {"(", "OPEN_PAR"}, {")", "CLOSE_PAR"},
         {"[", "OPEN_BRACKET"}, {"]", "CLOSE_BRACKET"},
-        {"\"", "QUOTE"}
+        {"\"", "QUOTE"}, {";", "CLOSE"}
     };
-
+    // Agregar el ++ y el punto y coma , cambia append y remove
     unordered_set<string> doubleCharOps = { ">>"};
     unordered_set<char> singleCharOps = {
-        '+', '-', '*', '/', '=', '<', '>', ':', ',', '(', ')', '[', ']', '"'
+        '+', '-', '*', '/', '=', '<', '>', ':', ',', '(', ')', '[', ']', '"',';'
     };
 
     inline bool is_digit(char c) { return isdigit(static_cast<unsigned char>(c)); }
@@ -65,10 +65,10 @@ private:
     bool isTimeFormat(const string& s);
 public:
     Scanner(const string& src) : source(src) {}
-
     Token gettoken();
     void printToken(const Token& token);
     int getErrorCount() const ;
+    void reset();
 };
 
 #endif // SCANNER_H

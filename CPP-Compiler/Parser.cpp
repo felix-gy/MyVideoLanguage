@@ -19,7 +19,7 @@ void Gramatica::cargarDesdeArchivo(const std::string &nombreArchivo) {
         int id;
 
         std::getline(ss, token, ':');
-        std::cout << "id "<< token << std::endl;
+        //std::cout << "id "<< token << std::endl;
         id = std::stoi(token);
 
         std::getline(ss, token, ':');
@@ -111,196 +111,6 @@ void Gramatica::imprimirFirstFollowTable() const {
         std::cout << "}\n\n";
     }
 }
-
-std::map<std::string, std::vector<int>> Gramatica::calcularFirstProducciones() const {
-    std::map<std::string, std::vector<int>> resultado;
-
-    for (const Produccion& prod : producciones) {
-        const Simbolo& lhs = prod.getLadoIzquierdo();
-        const std::vector<Simbolo>& rhs = prod.getLadoDerecho();
-
-        bool contieneEpsilon = false;
-        std::set<std::string> firstSet;
-
-        for (const Simbolo& simbolo : rhs) {
-            std::string nombre = simbolo.getNombre();
-
-            if (nombre == "E") {
-                contieneEpsilon = true;
-                break;
-            }
-
-            if (simbolo.esTerminal()) {
-                firstSet.insert(nombre);
-                break;
-            }
-
-            // Verificar si el no terminal está en la tabla
-            auto it = first_follow_Table.find(nombre);
-            if (it != first_follow_Table.end()) {
-                const auto& atributo = it->second;
-
-                for (const std::string& terminal : atributo.firstSet) {
-                    if (terminal != "E") {
-                        firstSet.insert(terminal);
-                    }
-                }
-
-                // Si contiene epsilon, seguimos con el siguiente símbolo
-                if (atributo.firstSet.find("E") != atributo.firstSet.end()) {
-                    continue;
-                } else {
-                    break;
-                }
-            } else {
-                std::cerr << "Advertencia: No se encontró el no terminal '" << nombre << "' en la tabla FIRST.\n";
-                break;
-            }
-        }
-
-        // Agregar terminales encontrados al resultado
-        for (const std::string& terminal : firstSet) {
-            resultado[terminal].push_back(prod.getId());
-        }
-
-        // Manejar producciones con ε explícito (solo "E" como lado derecho)
-        if (rhs.size() == 1 && rhs[0].getNombre() == "E") {
-            resultado["E"].push_back(prod.getId());
-        }
-    }
-
-    // Imprimir el resultado
-    std::cout << "First-Terminal -> Lista de IDs de Producciones:\n";
-    for (const auto& [terminal, lista] : resultado) {
-        std::cout << terminal << " -> { ";
-        for (int id : lista) {
-            std::cout << id << " ";
-        }
-        std::cout << "}\n";
-    }
-
-    return resultado;
-}
-std::map<std::string, std::vector<std::pair<std::string, int>>> Gramatica::obtenerTablaFirstProducciones() const {
-    std::map<std::string, std::vector<std::pair<std::string, int>>> resultado;
-
-    for (const Produccion& produccion : producciones) {
-        const std::string& noTerminal = produccion.getLadoIzquierdo().getNombre();
-        const std::vector<Simbolo>& ladoDerecho = produccion.getLadoDerecho();
-        int prodID = produccion.getId();
-
-        std::set<std::string> firstDeProduccion;
-
-        // Caso especial: Producción → E (epsilon)
-        if (ladoDerecho.size() == 1 && ladoDerecho[0].getNombre() == "E") {
-            firstDeProduccion.insert("ε");
-        } else {
-            bool todosAnulables = true;
-
-            for (const Simbolo& simbolo : ladoDerecho) {
-                const std::string& nombreSimbolo = simbolo.getNombre();
-
-                if (simbolo.esTerminal()) {
-                    firstDeProduccion.insert(nombreSimbolo);
-                    todosAnulables = false;
-                    break;
-                }
-
-                auto it = first_follow_Table.find(nombreSimbolo);
-                if (it != first_follow_Table.end()) {
-                    const NoTerminal_Atributos& atributos = it->second;
-                    for (const std::string& f : atributos.firstSet) {
-                        if (f != "ε") {
-                            firstDeProduccion.insert(f);
-                        }
-                    }
-
-                    if (!atributos.nullable) {
-                        todosAnulables = false;
-                        break;
-                    }
-                } else {
-                    std::cerr << "[Warning] No se encontró el símbolo no terminal '" << nombreSimbolo << "' en la tabla FIRST/FOLLOW.\n";
-                    todosAnulables = false;
-                    break;
-                }
-            }
-
-            if (todosAnulables) {
-                firstDeProduccion.insert("ε");
-            }
-        }
-
-        // Insertamos cada FIRST encontrado junto con la producción
-        for (const std::string& first : firstDeProduccion) {
-            resultado[first].emplace_back(noTerminal, prodID);
-        }
-    }
-
-    // Impresión para verificación
-    std::cout << "\n=== Tabla de FIRST por Producción ===\n";
-    for (const auto& [first, listaProducciones] : resultado) {
-        std::cout << "FIRST: " << first << "\n";
-        for (const auto& [noTerminal, idProd] : listaProducciones) {
-            std::cout << "  - " << noTerminal << " → Producción ID: " << idProd << "\n";
-        }
-    }
-    std::cout << "=== Fin de tabla ===\n";
-
-    return resultado;
-}
-
-std::map<std::string, std::vector<std::pair<std::string, int>>> Gramatica::obtenerFirstsConProducciones() const {
-    std::map<std::string, std::vector<std::pair<std::string, int>>> resultado;
-
-    for (const auto& prod : producciones) {
-        const Simbolo& ladoIzq = prod.getLadoIzquierdo();
-        const std::vector<Simbolo>& ladoDer = prod.getLadoDerecho();
-        int idProd = prod.getId();
-
-        // Calcular el FIRST del lado derecho
-        std::set<std::string> firstsDeProduccion;
-
-        for (const Simbolo& simbolo : ladoDer) {
-            if (simbolo.getNombre() == "E") {
-                firstsDeProduccion.insert("E");
-                break;
-            }
-
-            const auto& it = first_follow_Table.find(simbolo.getNombre());
-            if (it != first_follow_Table.end()) {
-                const auto& firstSet = it->second.firstSet;
-                firstsDeProduccion.insert(firstSet.begin(), firstSet.end());
-
-                if (firstSet.find("E") == firstSet.end()) {
-                    break; // si no es anulable, detenemos
-                }
-            } else {
-                if (simbolo.esTerminal()) {
-                    firstsDeProduccion.insert(simbolo.getNombre());
-                }
-                break;
-            }
-        }
-
-        // Insertar resultados
-        for (const std::string& terminal : firstsDeProduccion) {
-            resultado[ladoIzq.getNombre()].emplace_back(terminal, idProd);
-        }
-    }
-
-    // Imprimir resultado
-    std::cout << "\n--- Lista de FIRSTs con sus producciones ---\n";
-    for (const auto& [noTerminal, lista] : resultado) {
-        std::cout << noTerminal << ":\n";
-        for (const auto& [terminal, id] : lista) {
-            std::cout << "  FIRST: " << terminal << " => Producción ID: " << id << "\n";
-        }
-    }
-
-    return resultado;
-}
-
 
 void Gramatica::InitFirstWithProd() {
     std::map<std::string, std::vector<std::pair<std::string, int>>> resultado;
@@ -406,6 +216,120 @@ void Gramatica::buildParsingTable() {
             cout << "  " << t.first << " -> " << t.second << endl;
         }
     }
+    std::cout << "--------------------------------------------" << endl;
+}
 
 
+void Parser::parse() {
+    bool flag = false;
+    while (true) {
+        if (flag) {
+            break;
+        }
+        Token token = Scan.gettoken();
+        Scan.printToken(token);
+
+        switch (token.type) {
+            case INT:
+                input = "INT_LITERAL";
+                break;
+            case STRING:
+                input = "STRING_LITERAL";
+                break;
+            case TIME:
+                input = "TIME_LITERAL";
+                break;
+            case ID:
+                input = "ID";
+                break;
+            default:
+                input = token.value;
+                break;
+        }
+        if (token.type == ERROR) {
+            cout << "Erro en el scanner" << endl;
+            break;
+        }
+        if (token.type == EOP) {
+            cout << "Ultimo token recibido $" << endl;
+        };
+
+
+        int id_production;
+        /// SOLO ENTRA SI ES UN NO TERMINAL EN EL STACK
+        if (Gram.noTerminales.contains(stackParser.top())) {
+            do {
+                cout << "PARSER Input: " << input << "  StackTop: " << stackParser.top() << endl;
+                /// VERIFICAR SI EXISTE EN LA TABLA DE PARSING
+                if (Gram.parsingTable.find(stackParser.top()) != Gram.parsingTable.end()) {
+                    // Verificar si la clave interna existe
+                    if (Gram.parsingTable[stackParser.top()].find(input) != Gram.parsingTable[stackParser.top()].end()) {
+                        /// ENCONTRADO
+                        id_production = Gram.parsingTable[stackParser.top()][input];
+
+                    } else {
+                        /// RESCUPERACION DE ERRORES
+                        std::cout << "Clave interna no encontrada." << std::endl;
+                        flag = true;
+                        break;
+                    }
+                } else {
+                    std::cout << "Clave externa no encontrada." << std::endl;
+                    /// RESCUPERACION DE ERRORES
+                    flag = true;
+                    break;
+                }
+                cout << "PARSER Parsing Table [ " << stackParser.top() << " ]" << " [ " << input << " ] = ";  ;
+                stackParser.pop(); // CHECK ANTES ESTABA JUNTO AL INCIALIZAR ID
+                Gram.mapProducciones[id_production].print();
+
+                vector<Simbolo> production_to_stack = Gram.mapProducciones[id_production].getLadoDerecho();
+
+                for (auto it= production_to_stack.rbegin();it !=  production_to_stack.rend(); ++it) {
+
+                    stackParser.push(it->getNombre());
+                }
+
+                ///
+                printStack(stackParser);
+                if (stackParser.top() == "E") {
+                    cout << "PARSER pop Epsilon" << endl;
+                    stackParser.pop();
+                    printStack(stackParser);
+                }
+            } while (input != stackParser.top());
+        }
+        if (stackParser.top() == "$") {
+            cout << "PARSER CADENA ACEPTADA" << endl;
+            stackParser.pop();
+            break;
+        }
+        if (stackParser.top() == input) {
+            cout << "PARSER Match: " << input <<endl;
+            stackParser.pop();
+        }
+        else {
+            cout << "Parser Error No concide con la Gramatica" <<endl;
+            break;
+        }
+
+    }
+}
+
+void Parser::printStack(const std::stack<std::string>& _stack) {
+    std::stack<std::string> tempStack = _stack; // Copia el stack
+    std::vector<std::string> vec;
+
+    // Transferir los elementos al vector
+    while (!tempStack.empty()) {
+        vec.push_back(tempStack.top());
+        tempStack.pop();
+    }
+
+    // Imprimir el vector en orden inverso
+    std::cout << "PARSER Stack -> ";
+    for (auto it = vec.rbegin(); it != vec.rend(); ++it) {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
 }

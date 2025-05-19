@@ -52,7 +52,14 @@ Token Scanner::gettoken()
     if (c == '%') {
         string comment;
         while (peekchar() != '\n' && peekchar() != '\0') comment += getchar();
-        return { COMMENT, comment, "COMMENT", tokenLine, tokenCol };
+        //return { COMMENT, comment, "COMMENT", tokenLine, tokenCol };
+
+        while (is_space(peekchar())) getchar();
+        c = peekchar();
+        if (c == '\0') {
+            return { EOP, "$", "EOP", tokenLine, tokenCol };
+        }
+
     }
 
     if (is_alpha(c)) {
@@ -128,4 +135,11 @@ void Scanner::printToken(const Token& token)
 int Scanner::getErrorCount() const
 {
     return errorCount;
+}
+
+void Scanner::reset() {
+    index = 0;
+    line = 1;
+    col = 1;
+    errorCount = 0;
 }

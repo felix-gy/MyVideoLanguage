@@ -1,0 +1,6 @@
+video1:Video = load("video.txt");
+myint:Int = 4;
+
+if (a eq b) then
+    print("Son iguales");
+end

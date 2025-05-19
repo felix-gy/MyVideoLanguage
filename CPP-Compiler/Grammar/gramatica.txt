@@ -21,7 +21,8 @@
 20 : ExportStmt : export ( ID , STRING_LITERAL ) ;
 21 : FunStmt : append ( ID , ID ) ;
 22 : FunStmt : remove ( ID ) ;
-23 : Type : Video24 : Type : Playlist
+23 : Type : Video
+24 : Type : Playlist
 25 : Type : Int
 26 : Type : Time
 27 : Type : String
