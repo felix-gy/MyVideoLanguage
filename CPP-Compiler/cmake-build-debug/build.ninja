@@ -61,6 +61,18 @@ build CMakeFiles/CPP_Compiler.dir/Scanner.cpp.obj: CXX_COMPILER__CPP_Compiler_un
   OBJECT_DIR = CMakeFiles\CPP_Compiler.dir
   OBJECT_FILE_DIR = CMakeFiles\CPP_Compiler.dir
 
+build CMakeFiles/CPP_Compiler.dir/Parser.cpp.obj: CXX_COMPILER__CPP_Compiler_unscanned_Debug D$:/Projects/MyVideoLanguage/CPP-Compiler/Parser.cpp || cmake_object_order_depends_target_CPP_Compiler
+  DEP_FILE = CMakeFiles\CPP_Compiler.dir\Parser.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\CPP_Compiler.dir
+  OBJECT_FILE_DIR = CMakeFiles\CPP_Compiler.dir
+
+build CMakeFiles/CPP_Compiler.dir/Grammar.cpp.obj: CXX_COMPILER__CPP_Compiler_unscanned_Debug D$:/Projects/MyVideoLanguage/CPP-Compiler/Grammar.cpp || cmake_object_order_depends_target_CPP_Compiler
+  DEP_FILE = CMakeFiles\CPP_Compiler.dir\Grammar.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\CPP_Compiler.dir
+  OBJECT_FILE_DIR = CMakeFiles\CPP_Compiler.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target CPP_Compiler
@@ -69,7 +81,7 @@ build CMakeFiles/CPP_Compiler.dir/Scanner.cpp.obj: CXX_COMPILER__CPP_Compiler_un
 #############################################
 # Link the executable CPP_Compiler.exe
 
-build CPP_Compiler.exe: CXX_EXECUTABLE_LINKER__CPP_Compiler_Debug CMakeFiles/CPP_Compiler.dir/main.cpp.obj CMakeFiles/CPP_Compiler.dir/Scanner.cpp.obj
+build CPP_Compiler.exe: CXX_EXECUTABLE_LINKER__CPP_Compiler_Debug CMakeFiles/CPP_Compiler.dir/main.cpp.obj CMakeFiles/CPP_Compiler.dir/Scanner.cpp.obj CMakeFiles/CPP_Compiler.dir/Parser.cpp.obj CMakeFiles/CPP_Compiler.dir/Grammar.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\CPP_Compiler.dir

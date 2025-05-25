@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "CPP_Compiler::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-CPP_Compiler-Debug-731dd98f3c17545d2a75.json",
+					"jsonFile" : "target-CPP_Compiler-Debug-c410a0e4136180bab250.json",
 					"name" : "CPP_Compiler",
 					"projectIndex" : 0
 				}
@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "C:/Users/gordi/OneDrive/Documentos/Projects/MyVideoLanguage/CPP-Compiler/cmake-build-debug",
-		"source" : "C:/Users/gordi/OneDrive/Documentos/Projects/MyVideoLanguage/CPP-Compiler"
+		"build" : "D:/Projects/MyVideoLanguage/CPP-Compiler/cmake-build-debug",
+		"source" : "D:/Projects/MyVideoLanguage/CPP-Compiler"
 	},
 	"version" : 
 	{

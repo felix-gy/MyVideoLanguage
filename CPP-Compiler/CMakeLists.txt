@@ -8,4 +8,6 @@ add_executable(CPP_Compiler main.cpp
         Scanner.h
         Token.h
         Parser.cpp
-        Parser.h)
+        Parser.h
+        Grammar.cpp
+        Grammar.h)

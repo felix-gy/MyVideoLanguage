@@ -9,7 +9,7 @@
 using namespace std;
 
 int main() {
-    Gramatica gramatica;
+    Grammar gramatica;
     gramatica.cargarDesdeArchivo("../Grammar/gramatica.txt");
     gramatica.cargarFirstFollowTable("../Grammar/list_first.txt", "../Grammar/list_follows.txt", "../Grammar/true_null.txt");
     gramatica.InitFirstWithProd();
