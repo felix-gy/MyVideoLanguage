@@ -3,10 +3,8 @@
 //
 
 #include "Parser.h"
-
 #include <functional>
 #include <iostream>
-
 
 std::string removeQuotes(std::string input)
 {
@@ -16,7 +14,7 @@ std::string removeQuotes(std::string input)
     return input;
 }
 
-void Parser::parse() {
+void Parser::parsing() {
     // ----- PARSE TREE ------------
     int id = 0;
     treeNodesStack = std::stack<TreeNode*>();
@@ -132,8 +130,6 @@ void Parser::parse() {
                 || name_sym == "TIME_LITERAL"
                 || name_sym == "ID")
             {
-                cout << value << endl;
-                cout << "><<<<<<<<<<<<<<<<<<<" << " " << removeQuotes(value) << endl;
                 treeNodesStack.top()->nullableValue = removeQuotes(value);
             }
             treeNodesStack.pop();
@@ -152,23 +148,18 @@ void Parser::parse() {
 }
 
 void Parser::printStack(const std::stack<std::string>& _stack) {
-    std::stack<std::string> tempStack = _stack; // Copia el stack
+    std::stack<std::string> tempStack = _stack;
     std::vector<std::string> vec;
-
-    // Transferir los elementos al vector
     while (!tempStack.empty()) {
         vec.push_back(tempStack.top());
         tempStack.pop();
     }
-
-    // Imprimir el vector en orden inverso
-    std::cout << "PARSER Stack -> ";
+    std::cout << "PARSER Stack -> "; // Imprimir el vector en orden inverso
     for (auto it = vec.rbegin(); it != vec.rend(); ++it) {
         std::cout << *it << " ";
     }
     std::cout << std::endl;
 }
-
 void Parser::exportTreeToFile(const TreeNode* root, const std::string& filename) const
 {
     std::ofstream file(filename);
@@ -176,28 +167,21 @@ void Parser::exportTreeToFile(const TreeNode* root, const std::string& filename)
         std::cerr << "Error al abrir el archivo " << filename << std::endl;
         return;
     }
-
     file << "digraph Tree {\n";
     file << "    node [shape=ellipse];\n";
-
     function<void(const TreeNode*)> writeNode;
     writeNode = [&](const TreeNode* node) {
         if (!node) return;
-
         // Etiqueta del nodo
         std::string label = node->isVar() ? node->completeValue() : node->symbol.getNombre();
         file << "    node" << node->nodeId << " [label=\"" << label << "\"];\n";
-
         // Conexiones con hijos
         for (const TreeNode* child : node->children) {
             file << "    node" << node->nodeId << " -> node" << child->nodeId << ";\n";
             writeNode(child);
         }
     };
-
     writeNode(root);
-
     file << "}\n";
     file.close();
-
 }

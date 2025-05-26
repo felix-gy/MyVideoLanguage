@@ -17,8 +17,8 @@ int main() {
     //gramatica.imprimirFirstFollowTable();
 
     // FILE TEST ----------------------------------------------------------------
-    //ifstream file("../dir_files/programa.txt");
-    ifstream file("../dir_files/test.txt");
+    //ifstream file("../Test-Files/programa.txt");
+    ifstream file("../Test-Files/test.txt");
     // --------------------------------------------------------------------------
     if (!file.is_open()) {
         cerr << "No se pudo abrir el archivo.\n";
@@ -39,7 +39,7 @@ int main() {
 
     cout << "------ INFO PARSER - Start parsing.. ------\n";
     Parser parser(gramatica, scanner);
-    parser.parse();
+    parser.parsing();
     cout << "------ INFO PARSER - Completed with " << parser.getErrorCount() << " errors ------\n";
     return 0;
 }
