@@ -14,7 +14,6 @@ int main() {
     gramatica.cargarFirstFollowTable("../Grammar/list_first.txt", "../Grammar/list_follows.txt", "../Grammar/true_null.txt");
     gramatica.InitFirstWithProd();
     gramatica.buildParsingTable();
-    unordered_set<string> func = {"ID", };
     //gramatica.imprimirFirstFollowTable();
 
     // FILE TEST ----------------------------------------------------------------

@@ -72,8 +72,9 @@ struct NonTerminalFeatures {
 class Grammar {
 private:
     std::vector<Production> producciones;
-    std::map<std::string, NonTerminalFeatures> first_follow_Table;
+
 public:
+    std::map<std::string, NonTerminalFeatures> first_follow_Table;
     std::unordered_map<std::string, std::unordered_map<std::string, int>> parsingTable;
     std::map<int, Production> mapProducciones;
 

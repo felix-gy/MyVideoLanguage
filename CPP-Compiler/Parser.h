@@ -58,6 +58,8 @@ public:
     std::stack<TreeNode*> treeNodesStack;
     std::string input;
     int errorCount = 0;
+    unordered_set<string> error_sync = {";", "$", "end"};
+    unordered_set<string> list_sync = {"Program", "StmtList'", "Stmt"};
     Parser(const Grammar& grammar, const Scanner& scanner) : Gram(grammar), Scan(scanner) {
         Scan.reset();
         stackParser.push("$");

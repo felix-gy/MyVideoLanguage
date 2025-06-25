@@ -21,12 +21,15 @@ void Parser::parsing() {
     auto* root = new TreeNode(stackParser.top(), nullptr, id++);
     treeNodesStack.push(root); // Nodo padre PROGRAM
     // -----------------------------
-    bool flag = false;
+    bool end_flag = false;
     bool declFlag = false;
     bool idFlag = false;
+    bool error_sync_flag = false;
     string idName;
     while (true) {
-        if (flag) {
+        error_sync_flag = false;
+        if (end_flag) {
+            cout << "PARSING COMPLETADO" << endl;
             break;
         }
         Token token = Scan.gettoken();
@@ -76,17 +79,54 @@ void Parser::parsing() {
 
                     } else {
                         /// RESCUPERACION DE ERRORES
-                        std::cout << "Clave interna no encontrada." << std::endl;
-                        flag = true;
-                        break;
+                        errorCount++;
+                        std::cout <<"[" << errorCount << "] Clave interna no encontrada." << std::endl;
+                        std::cout << "Panic Mode Recovery --------------------------" << std::endl;
+                        error_sync_flag = true;
+                        while (!list_sync.contains(stackParser.top()))
+                        {
+                            treeNodesStack.pop();
+                            stackParser.pop();
+                        }
+                        cout << "STACK MODIFICADO "<< stackParser.top() << endl;
+                        printStack(stackParser);
+
+                        Token check_token = token;
+                        std::cout << " --- Skip scanner --- " << std::endl;
+
+                        while (!(Gram.first_follow_Table[stackParser.top()].firstSet.contains(check_token.type == ID ? "ID" : check_token.value)))
+                        {
+
+                            check_token = Scan.gettoken();
+                            Scan.printToken(check_token);
+
+                            if (check_token.type == EOP)
+                            {
+                                end_flag = true;
+                                break;
+                            }
+                        }
+                        std::cout << " -------------------- " << std::endl;
+                        //end_flag = true;
+                        //break;
+                        if (end_flag) break;
+                        if (check_token.type == ID)
+                        {
+                            input = "ID";
+                        }
+                        else
+                        {
+                            input = check_token.value;
+                        }
+                        id_production = Gram.parsingTable[stackParser.top()][input];
                     }
                 } else {
                     std::cout << "Clave externa no encontrada." << std::endl;
                     /// RESCUPERACION DE ERRORES
-                    flag = true;
+                    end_flag = true;
                     break;
                 }
-                cout << "PARSER Parsing Table [ " << stackParser.top() << " ]" << " [ " << input << " ] = ";  ;
+                cout << "PARSER Parsing Table [ " << stackParser.top() << " ]" << " [ " << input << " ] = ";
 
                 if (stackParser.top() == "Decl")
                 {
@@ -120,53 +160,80 @@ void Parser::parsing() {
             } while (input != stackParser.top());
         }
 
+        ///////
 
-
-        if (flag == false && stackParser.top() == "$") {
-            cout << "PARSING COMPLETADO CADENA ACEPTADA" << endl;
-            stackParser.pop();
-            treeNodesStack.pop();
-            break;
-        }
-        if (stackParser.top() == input) {
-
-            cout << "PARSER Match: " << input <<endl;
-            if (input == ";")
-            {
-                declFlag = false;
+        if (!error_sync_flag)
+        {
+            if (end_flag == false && stackParser.top() == "$") {
+                cout << "PARSING COMPLETADO" << endl;
+                stackParser.pop();
+                treeNodesStack.pop();
+                break;
             }
-            if ((input == "Video"
-                || input == "Int"
-                || input == "String"
-                || input == "Playlist"
-                || input == "Bool"
-                || input == "Time") && declFlag == true && idFlag == true)
-            {
-                declFlag = false;
-                idFlag = false;
-                varTable[idName] = input;
-            }
-            stackParser.pop();
-            // ----- PARSE TREE ------------
-            std::string name_sym = treeNodesStack.top()->symbol.getNombre();
-            if ( name_sym == "INT_LITERAL"
-                || name_sym == "STRING_LITERAL"
-                || name_sym == "TIME_LITERAL"
-                || name_sym == "ID")
-            {
-                if (name_sym == "ID")
+            if (stackParser.top() == input) {
+
+                cout << "PARSER Match: " << input <<endl;
+                if (input == ";")
                 {
-                    idName = removeQuotes(value);
-                    idFlag = true;
+                    declFlag = false;
                 }
-                treeNodesStack.top()->nullableValue = removeQuotes(value);
+                if ((input == "Video"
+                    || input == "Int"
+                    || input == "String"
+                    || input == "Playlist"
+                    || input == "Bool"
+                    || input == "Time") && declFlag == true && idFlag == true)
+                {
+                    declFlag = false;
+                    idFlag = false;
+                    varTable[idName] = input;
+                }
+                stackParser.pop();
+                // ----- PARSE TREE ------------
+                std::string name_sym = treeNodesStack.top()->symbol.getNombre();
+                if ( name_sym == "INT_LITERAL"
+                    || name_sym == "STRING_LITERAL"
+                    || name_sym == "TIME_LITERAL"
+                    || name_sym == "ID")
+                {
+                    if (name_sym == "ID")
+                    {
+                        idName = removeQuotes(value);
+                        idFlag = true;
+                    }
+                    treeNodesStack.top()->nullableValue = removeQuotes(value);
+                }
+                treeNodesStack.pop();
+                // -----------------------------
             }
-            treeNodesStack.pop();
-            // -----------------------------
-        }
-        else {
-            cout << "Parser Error No concide con la Gramatica" <<endl;
-            break;
+            else {
+                errorCount++;
+
+                cout <<"[" << errorCount <<"] Error No concide con la Gramatica" <<endl;
+                std::cout << "Panic Mode Recovery --------------------------" << std::endl;
+                while (!list_sync.contains(stackParser.top()))
+                {
+                    treeNodesStack.pop();
+                    stackParser.pop();
+                }
+                cout << "STACK MODIFICADO "<< stackParser.top() << endl;
+                printStack(stackParser);
+
+                Token check_token = token;
+                std::cout << " --- Skip scanner --- " << std::endl;
+                while (!error_sync.contains(check_token.value))
+                {
+                    check_token = Scan.gettoken();
+                    Scan.printToken(check_token);
+                    if (check_token.type == EOP)
+                    {
+                        end_flag = true;
+                        break;
+                    }
+                }
+                std::cout << " -------------------- " << std::endl;
+                //break;
+            }
         }
 
     }
