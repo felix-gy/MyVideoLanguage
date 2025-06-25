@@ -213,6 +213,11 @@ void Grammar::buildParsingTable() {
 
         if (epsilon) {
             for (const auto& f : first_follow_Table[NT].followSet ) {
+                if ( parsingTable[NT].contains(f))
+                {
+                    continue;
+
+                }
                 parsingTable[NT][f] = epsilonId;
             }
         }

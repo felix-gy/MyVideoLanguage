@@ -47,7 +47,7 @@ private:
         {"\"", "QUOTE"}, {";", "CLOSE"}
     };
     // Agregar el ++ y el punto y coma , cambia append y remove
-    unordered_set<string> doubleCharOps = { ">>"};
+    unordered_set<string> doubleCharOps = { ">>", "++"};
     unordered_set<char> singleCharOps = {
         '+', '-', '*', '/', '=', '<', '>', ':', ',', '(', ')', '[', ']', '"',';'
     };

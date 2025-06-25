@@ -22,6 +22,9 @@ void Parser::parsing() {
     treeNodesStack.push(root); // Nodo padre PROGRAM
     // -----------------------------
     bool flag = false;
+    bool declFlag = false;
+    bool idFlag = false;
+    string idName;
     while (true) {
         if (flag) {
             break;
@@ -85,7 +88,10 @@ void Parser::parsing() {
                 }
                 cout << "PARSER Parsing Table [ " << stackParser.top() << " ]" << " [ " << input << " ] = ";  ;
 
-
+                if (stackParser.top() == "Decl")
+                {
+                    declFlag = true;
+                }
                 stackParser.pop(); // CHECK ANTES ESTABA JUNTO AL INCIALIZAR ID
                 Gram.mapProducciones[id_production].print();
 
@@ -113,6 +119,9 @@ void Parser::parsing() {
                 }
             } while (input != stackParser.top());
         }
+
+
+
         if (flag == false && stackParser.top() == "$") {
             cout << "PARSING COMPLETADO CADENA ACEPTADA" << endl;
             stackParser.pop();
@@ -122,6 +131,21 @@ void Parser::parsing() {
         if (stackParser.top() == input) {
 
             cout << "PARSER Match: " << input <<endl;
+            if (input == ";")
+            {
+                declFlag = false;
+            }
+            if ((input == "Video"
+                || input == "Int"
+                || input == "String"
+                || input == "Playlist"
+                || input == "Bool"
+                || input == "Time") && declFlag == true && idFlag == true)
+            {
+                declFlag = false;
+                idFlag = false;
+                varTable[idName] = input;
+            }
             stackParser.pop();
             // ----- PARSE TREE ------------
             std::string name_sym = treeNodesStack.top()->symbol.getNombre();
@@ -130,6 +154,11 @@ void Parser::parsing() {
                 || name_sym == "TIME_LITERAL"
                 || name_sym == "ID")
             {
+                if (name_sym == "ID")
+                {
+                    idName = removeQuotes(value);
+                    idFlag = true;
+                }
                 treeNodesStack.top()->nullableValue = removeQuotes(value);
             }
             treeNodesStack.pop();
@@ -184,4 +213,13 @@ void Parser::exportTreeToFile(const TreeNode* root, const std::string& filename)
     writeNode(root);
     file << "}\n";
     file.close();
+}
+
+void Parser::printVarTable()
+{
+    cout << "Var Table" << endl;
+    for (auto& v : varTable)
+    {
+        cout << v.first << " | " << v.second << endl;
+    }
 }

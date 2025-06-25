@@ -50,16 +50,23 @@ Token Scanner::gettoken()
     }
 
     if (c == '%') {
-        string comment;
-        while (peekchar() != '\n' && peekchar() != '\0') comment += getchar();
+
+
         //return { COMMENT, comment, "COMMENT", tokenLine, tokenCol };
 
-        while (is_space(peekchar())) getchar();
-        c = peekchar();
-        if (c == '\0') {
-            return { EOP, "$", "EOP", tokenLine, tokenCol };
-        }
+        do
+        {
+            string comment;
+            while (peekchar() != '\n' && peekchar() != '\0') comment += getchar();
+            cout << "SE PASO TODO" << endl;
 
+            while (is_space(peekchar())) getchar();
+            c = peekchar();
+            cout << "se supone que recorrio todos los esapcios: " << c  << endl;
+            if (c == '\0') {
+                return { EOP, "$", "EOP", tokenLine, tokenCol };
+            }
+        } while (c == '%');
     }
 
     if (is_alpha(c)) {

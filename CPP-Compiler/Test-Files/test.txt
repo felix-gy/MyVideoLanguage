@@ -4,3 +4,20 @@ myint:Int = 4;
 if (a eq b) then
     print("Son iguales");
 end
+
+video3 = video1 ++ video2;
+a = 1 + 2;
+b = 4 - 3;
+% c = 5 * 2;
+% d = 8 / 2;
+e = a >> b;
+
+video2 = clip(video1, 00:00:05, 00:00:10);
+
+replay (clips in playlist1) then
+    print("Reproduciendo");
+end
+
+replay (i in 3) then
+    print("Iteración");
+end

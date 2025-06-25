@@ -53,6 +53,7 @@ class Parser {
 public:
     Grammar Gram;
     Scanner Scan;
+    std::unordered_map<string, string> varTable;
     std::stack<string> stackParser;
     std::stack<TreeNode*> treeNodesStack;
     std::string input;
@@ -68,8 +69,11 @@ public:
         return errorCount;
     }
     void printStack(const std::stack<std::string>& stack);
+    void printVarTable();
+
 private:
     void exportTreeToFile(const TreeNode* root, const std::string& filename) const;
+
 };
 
 
