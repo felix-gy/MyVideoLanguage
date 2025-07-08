@@ -18,7 +18,7 @@ int main() {
 
     // FILE TEST ----------------------------------------------------------------
     //ifstream file("../Test-Files/programa.txt");
-    ifstream file("../Test-Files/test.txt");
+    ifstream file("../Test-Files/test_2.txt");
     // --------------------------------------------------------------------------
     if (!file.is_open()) {
         cerr << "No se pudo abrir el archivo.\n";

@@ -10,4 +10,5 @@ add_executable(CPP_Compiler main.cpp
         Parser.cpp
         Parser.h
         Grammar.cpp
-        Grammar.h)
+        Grammar.h
+        archivos.h)

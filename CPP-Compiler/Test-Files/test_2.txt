@@ -1,2 +1,12 @@
-"hola" hola:Video =;
-ss:Int = 34;
+
+myint:Int = 5;
+
+if (a eq b) then
+    print("Son iguales");
+    b = 1 + myint + 4;
+    video1:Video = load("video.txt");
+end
+
+video3:Video = video1 >> video2;
+video4 = speed(video1, 2);
+export(video3, "name_video");
