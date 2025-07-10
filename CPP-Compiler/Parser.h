@@ -150,7 +150,7 @@ public:
         /// Añandimos la produccion incial (no terminal)
         stackParser.push(Gram.mapProducciones[0].getLadoIzquierdo().getNombre());
     }
-    void parsing();
+    TreeNode* parsing();
     int getErrorCount() const {
         return errorCount;
     }

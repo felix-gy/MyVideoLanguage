@@ -605,7 +605,7 @@ TreeNode* processAST(TreeNode* root, const std::vector<std::string>& ast_element
     return simplifyToBinaryAST(root, ast_elements, idconter);
 }
 
-void Parser::parsing() {
+TreeNode* Parser::parsing() {
     // ----- PARSE TREE ------------
     int id = 0;
     treeNodesStack = std::stack<TreeNode*>();
@@ -836,6 +836,7 @@ void Parser::parsing() {
     reassignPositiveIds(root, n_counter_ids);
     exportTreeToFile(processAST(root, AST_ELEMENTS_PRIORITY), "ParseTree_2.dot");
     std::cout << "Datos del arbol guardados en 'ParseTree.dot'." << std::endl;
+    return root;
 }
 
 void Parser::printStack(const std::stack<std::string>& _stack) {

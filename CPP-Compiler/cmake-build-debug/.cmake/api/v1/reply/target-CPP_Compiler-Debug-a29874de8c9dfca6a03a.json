@@ -55,7 +55,8 @@
 				0,
 				1,
 				4,
-				6
+				6,
+				9
 			]
 		}
 	],
@@ -95,7 +96,8 @@
 				0,
 				1,
 				4,
-				6
+				6,
+				9
 			]
 		},
 		{
@@ -106,7 +108,8 @@
 				3,
 				5,
 				7,
-				8
+				8,
+				10
 			]
 		}
 	],
@@ -159,6 +162,17 @@
 		{
 			"backtrace" : 1,
 			"path" : "archivos.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "PythonCodeGenerator.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "PythonCodeGenerator.h",
 			"sourceGroupIndex" : 1
 		}
 	],

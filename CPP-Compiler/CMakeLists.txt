@@ -11,4 +11,6 @@ add_executable(CPP_Compiler main.cpp
         Parser.h
         Grammar.cpp
         Grammar.h
-        archivos.h)
+        archivos.h
+        PythonCodeGenerator.cpp
+        PythonCodeGenerator.h)
