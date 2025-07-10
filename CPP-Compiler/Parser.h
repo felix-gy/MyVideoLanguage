@@ -26,7 +26,7 @@ const std::vector<std::string> AST_ELEMENTS_PRIORITY = {
     //"Assign",         // Asignación (más específica que StmtDA)
     // 1. Nodos de Estructura Principal y Contenedores (más alta prioridad)
     // 4. Nodos que representan llamadas a funciones específicas o estructuras de datos compuestas
-    "FuncCall",       // Representa una llamada a función (load, duration, etc.)
+    //"FuncCall",       // Representa una llamada a función (load, duration, etc.)
     "ListLit",        // Literal de lista (ej. [IDList])
     "IDList",         // Lista de identificadores (dentro de ListLit)
     "=",
@@ -102,6 +102,7 @@ struct TreeNode
     int nodeId;
     Symbol symbol;
     const TreeNode* parentNode;
+
     list<TreeNode*> children;
     std::string nullableValue;
     bool isVar() const
@@ -116,6 +117,7 @@ struct TreeNode
     {
         return symbol.getNombre() + " , " + nullableValue;
     }
+
     TreeNode(const std::string& symbol_name, const TreeNode* parent, const int id) : nodeId(id), symbol(Symbol(symbol_name)), parentNode(parent) {}
 
     // Destructor recursivo

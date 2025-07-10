@@ -483,7 +483,7 @@ TreeNode* simplifyToBinaryAST(TreeNode* root, const std::vector<std::string>& as
 TreeNode* simplifyToBinaryAST(TreeNode* root, const std::vector<std::string>& ast_elements, int& currentId) {
     if (!root) return nullptr;
 
-    // Procesamiento de derecha a izquierda
+    // 1. Procesamiento recursivo (derecha a izquierda)
     std::list<TreeNode*> newChildren;
     for (auto it = root->children.rbegin(); it != root->children.rend(); ++it) {
         TreeNode* simplifiedChild = simplifyToBinaryAST(*it, ast_elements, currentId);
@@ -493,28 +493,12 @@ TreeNode* simplifyToBinaryAST(TreeNode* root, const std::vector<std::string>& as
     }
     root->children = newChildren;
 
-    // Caso especial para asignaciones (=)
+    // 2. Casos especiales para operadores y StmtDA
     if (root->symbol.getNombre() == "=") {
-        // Asegurar estructura binaria para el operador =
-        if (root->children.size() > 2) {
-            // Reorganizar para tener exactamente 2 hijos (binario)
-            TreeNode* leftPart = root->children.front();
-            root->children.pop_front();
-
-            TreeNode* rightPart = new TreeNode("Expr", root, currentId++);
-            while (!root->children.empty()) {
-                rightPart->children.push_back(root->children.front());
-                root->children.pop_front();
-            }
-
-            root->children.push_back(leftPart);
-            root->children.push_back(rightPart);
-        }
+        // Ya no forzamos estructura binaria para =
         return root;
     }
-    // Caso especial para StmtDA (lo eliminamos pero preservamos su estructura)
     else if (root->symbol.getNombre() == "StmtDA") {
-        // Buscar el nodo = en los hijos
         auto it = std::find_if(root->children.begin(), root->children.end(),
             [](TreeNode* child) { return child->symbol.getNombre() == "="; });
 
@@ -522,16 +506,18 @@ TreeNode* simplifyToBinaryAST(TreeNode* root, const std::vector<std::string>& as
             TreeNode* equalsNode = *it;
             root->children.erase(it);
 
-            // Reorganizar: el = se convierte en el nuevo nodo raíz
-            equalsNode->children.push_back(root->children.front()); // ID
-            root->children.pop_front();
-
-            if (!root->children.empty()) {
-                equalsNode->children.push_back(root->children.front()); // Valor
-                root->children.pop_front();
+            // Agregar todos los hijos relevantes (no solo 2)
+            for (auto childIt = root->children.begin(); childIt != root->children.end(); ) {
+                if ((*childIt)->symbol.getNombre() == "ID" ||
+                    (*childIt)->isVar() ||
+                    (*childIt)->symbol.getNombre() == "Expr") {
+                    equalsNode->children.push_back(*childIt);
+                    childIt = root->children.erase(childIt);
+                } else {
+                    ++childIt;
+                }
             }
 
-            // Eliminar el StmtDA y devolver el = como nuevo nodo raíz
             root->children.clear();
             delete root;
             return equalsNode;
@@ -539,24 +525,11 @@ TreeNode* simplifyToBinaryAST(TreeNode* root, const std::vector<std::string>& as
         return root;
     }
 
+    // 3. Lógica principal de simplificación
     bool shouldKeep = std::find(ast_elements.begin(), ast_elements.end(), root->symbol.getNombre()) != ast_elements.end();
 
     if (shouldKeep || root->isVar()) {
-        // Asegurar estructura binaria
-        if (root->children.size() > 2) {
-            TreeNode* newParent = new TreeNode(root->symbol.getNombre(), root->parentNode, currentId++);
-            newParent->children.push_back(root->children.front());
-            root->children.pop_front();
-
-            while (root->children.size() > 1) {
-                TreeNode* rightNode = root->children.front();
-                root->children.pop_front();
-                newParent->children.push_back(rightNode);
-                const_cast<TreeNode*>(rightNode)->parentNode = newParent;
-            }
-
-            root->children.push_front(newParent);
-        }
+        // Ya no forzamos estructura binaria para nodos protegidos
         return root;
     } else {
         if (root->children.empty()) {
@@ -568,11 +541,10 @@ TreeNode* simplifyToBinaryAST(TreeNode* root, const std::vector<std::string>& as
             delete root;
             return child;
         } else {
-            // Selección por prioridad combinada
             auto getPriority = [&](TreeNode* node) {
                 auto it = std::find(ast_elements.begin(), ast_elements.end(), node->symbol.getNombre());
                 return (it != ast_elements.end()) ?
-                    std::make_pair(node->deep, static_cast<int>(std::distance(ast_elements.begin(), it))):
+                    std::make_pair(node->deep, static_cast<int>(std::distance(ast_elements.begin(), it))) :
                     std::make_pair(INT_MAX, INT_MAX);
             };
 
@@ -582,17 +554,29 @@ TreeNode* simplifyToBinaryAST(TreeNode* root, const std::vector<std::string>& as
                 [&](TreeNode* a, TreeNode* b) { return getPriority(a) < getPriority(b); }
             );
 
-            // Reorganización manteniendo estructura binaria
+            // 4. Unión de nodos compatibles (versión no binaria)
             for (TreeNode* child : root->children) {
                 if (child != selectedChild) {
-                    if (selectedChild->children.size() >= 2) {
-                        TreeNode* newParent = new TreeNode(selectedChild->symbol.getNombre(), selectedChild, currentId++);
-                        newParent->children = selectedChild->children;
-                        selectedChild->children.clear();
-                        selectedChild->children.push_back(newParent);
+                    // Condiciones para unión:
+                    // 1. Mismo tipo de nodo
+                    // 2. No es un literal/variable
+                    // 3. No está en la lista de elementos protegidos
+                    if (child->symbol.getNombre() == selectedChild->symbol.getNombre() &&
+                        !child->isVar() &&
+                        std::find(ast_elements.begin(), ast_elements.end(), child->symbol.getNombre()) == ast_elements.end()) {
+
+                        // Unir los hijos del nodo compatible
+                        for (TreeNode* grandchild : child->children) {
+                            selectedChild->children.push_back(grandchild);
+                            const_cast<TreeNode*>(grandchild)->parentNode = selectedChild;
+                        }
+                        // Eliminar el nodo fusionado
+                        delete child;
+                    } else {
+                        // Si no se puede unir, agregar como hijo normal
+                        selectedChild->children.push_back(child);
+                        const_cast<TreeNode*>(child)->parentNode = selectedChild;
                     }
-                    selectedChild->children.push_back(child);
-                    const_cast<TreeNode*>(child)->parentNode = selectedChild;
                 }
             }
 
@@ -602,6 +586,7 @@ TreeNode* simplifyToBinaryAST(TreeNode* root, const std::vector<std::string>& as
         }
     }
 }
+
 void reassignPositiveIds(TreeNode* root, int& currentId) {
     if (!root) return;
 

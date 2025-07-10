@@ -5,7 +5,7 @@ myint:Int = 4;
     print("Son iguales");
 end
 
-video3 = video1 ++ video2;
+video3:Video = video1 ++ video2;
 a = 1 + 2;
 b = 4 - 3;
 % c = 5 * 2;
