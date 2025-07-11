@@ -10,3 +10,9 @@ end
 video3:Video = video1 >> video2;
 video4 = speed(video1, 2);
 export(video3, "name_video");
+
+% a = 1 + 2;
+% b = 4 - 3;
+% c = 5 * 2;
+% d = 8 / 2;
+% e = a >> b;

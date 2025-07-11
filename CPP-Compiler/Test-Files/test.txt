@@ -1,23 +1,26 @@
-video1:Video = load("video.txt");
-myint:Int = 4;
 
- if (a eq b) then
-    print("Son iguales");
+video1:Video = load("video.mp4");
+video2:Video = load("video_22.mp4");
+
+timepo1:Time = 00:01:00;
+timepo2clip:Time = 00:05:00;
+
+first:Int = 5;
+second:Int = 10;
+
+if (first neq second) then
+    print("Son diferentes");
 end
 
-video3:Video = video1 ++ video2;
-a = 1 + 2;
-b = 4 - 3;
-% c = 5 * 2;
-% d = 8 / 2;
-e = a >> b;
+videoRecortado =  clip(video1, timepo1, timepo2clip);
+videoConcatenado:Video = videoRecortado ++ video2;
 
-video2 = clip(video1, 00:00:05, 00:00:10);
-
-replay (clips in playlist1) then
-    print("Reproduciendo");
-end
-
+videoFinal:Video = speed( videoConcatenado, 2);
 replay (i in 3) then
     print("Iteración");
 end
+
+durationTime:Time = duration(videoFinal);
+
+export(videoFinal, "videoFinal.mp4");
+

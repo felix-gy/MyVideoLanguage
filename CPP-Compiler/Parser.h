@@ -21,7 +21,7 @@
 std::string removeQuotes(std::string input) ;
 const std::vector<std::string> AST_ELEMENTS_PRIORITY = {
     "Program",
-    "Stmt",
+    //"Stmt",
     //"Decl",           // Declaración (más específica que StmtDA)
     //"Assign",         // Asignación (más específica que StmtDA)
     // 1. Nodos de Estructura Principal y Contenedores (más alta prioridad)
@@ -46,7 +46,7 @@ const std::vector<std::string> AST_ELEMENTS_PRIORITY = {
     "export",
 
 
-    "StmtList",       // Secuencia de sentencias
+    //"StmtList",       // Secuencia de sentencias
     "Stmt",           // Sentencia individual
 
     // 2. Nodos de Control de Flujo y Declaraciones/Asignaciones de alto nivel

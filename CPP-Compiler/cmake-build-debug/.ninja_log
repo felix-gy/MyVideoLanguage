@@ -1,6 +1,7 @@
 # ninja log v6
-8	3925	7738710046345067	CMakeFiles/CPP_Compiler.dir/main.cpp.obj	9af85cf31c1a090b
+5	2135	7739343727075418	CMakeFiles/CPP_Compiler.dir/PythonCodeGenerator.cpp.obj	1ac38fe847844d9a
+6	2102	7739327940522204	CMakeFiles/CPP_Compiler.dir/main.cpp.obj	9af85cf31c1a090b
 12	4583	7717870736104045	CMakeFiles/CPP_Compiler.dir/Scanner.cpp.obj	a1f605b31be39c87
-3661	4692	7738723868891267	CPP_Compiler.exe	2a17b154004d2bda
 56	12680	7725276225549457	CMakeFiles/CPP_Compiler.dir/Grammar.cpp.obj	4df139caeb338384
-7	3661	7738723832345623	CMakeFiles/CPP_Compiler.dir/Parser.cpp.obj	16668e5fca739340
+2135	3323	7739343748375659	CPP_Compiler.exe	1479e78c111b519d
+4	2623	7739067256976846	CMakeFiles/CPP_Compiler.dir/Parser.cpp.obj	16668e5fca739340

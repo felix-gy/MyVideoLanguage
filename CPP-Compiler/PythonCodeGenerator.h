@@ -18,8 +18,7 @@ class PythonCodeGenerator {
 private:
     std::ostringstream output;
     //std::unordered_map<std::string, std::function<std::string(TreeNode)>> generadores;
-    std::unordered_map<std::string, std::function<std::string(TreeNode*)>> generadores;
-
+    std::unordered_map<std::string, std::function<std::string(TreeNode*, int)>> generadores;
 
     void inicializarGeneradores();
     void recorrerNodo(TreeNode* node, int indent = 0);
@@ -27,6 +26,8 @@ private:
 
 public:
     PythonCodeGenerator();
+
+    void generarDesdePrograma(TreeNode* root);
     void generarDesdeAST(TreeNode* root);
     void guardarEnArchivo(const std::string& path);
 };

@@ -486,6 +486,7 @@ TreeNode* simplifyToBinaryAST(TreeNode* root, const std::vector<std::string>& as
     // 1. Procesamiento recursivo (derecha a izquierda)
     std::list<TreeNode*> newChildren;
     for (auto it = root->children.rbegin(); it != root->children.rend(); ++it) {
+    //for (auto it = root->children.begin(); it != root->children.end(); ++it) {
         TreeNode* simplifiedChild = simplifyToBinaryAST(*it, ast_elements, currentId);
         if (simplifiedChild) {
             newChildren.push_front(simplifiedChild);
@@ -525,6 +526,7 @@ TreeNode* simplifyToBinaryAST(TreeNode* root, const std::vector<std::string>& as
         return root;
     }
 
+
     // 3. Lógica principal de simplificación
     bool shouldKeep = std::find(ast_elements.begin(), ast_elements.end(), root->symbol.getNombre()) != ast_elements.end();
 
@@ -561,7 +563,7 @@ TreeNode* simplifyToBinaryAST(TreeNode* root, const std::vector<std::string>& as
                     // 1. Mismo tipo de nodo
                     // 2. No es un literal/variable
                     // 3. No está en la lista de elementos protegidos
-                    if (child->symbol.getNombre() == selectedChild->symbol.getNombre() &&
+                    if (0 && child->symbol.getNombre() == selectedChild->symbol.getNombre() &&
                         !child->isVar() &&
                         std::find(ast_elements.begin(), ast_elements.end(), child->symbol.getNombre()) == ast_elements.end()) {
 
@@ -585,6 +587,98 @@ TreeNode* simplifyToBinaryAST(TreeNode* root, const std::vector<std::string>& as
             return selectedChild;
         }
     }
+
+}
+
+// Función auxiliar para verificar si un nodo está protegido
+bool isProtectedNode(TreeNode* node, const std::vector<std::string>& ast_elements) {
+    return node && std::find(ast_elements.begin(), ast_elements.end(),
+                           node->symbol.getNombre()) != ast_elements.end();
+}
+
+// Función recursiva para unión profunda de nodos
+void deepMergeNodes(TreeNode* current, const std::vector<std::string>& ast_elements) {
+    if (!current) return;
+
+    // Primero procesar los hijos recursivamente
+    for (TreeNode* child : current->children) {
+        deepMergeNodes(child, ast_elements);
+    }
+
+    // Unión solo para nodos protegidos
+    if (isProtectedNode(current, ast_elements)) {
+        std::list<TreeNode*> mergedChildren;
+        TreeNode* lastSimilar = nullptr;
+
+        for (auto it = current->children.begin(); it != current->children.end(); ) {
+            TreeNode* child = *it;
+
+            if (lastSimilar && child->symbol.getNombre() == lastSimilar->symbol.getNombre() &&
+                isProtectedNode(child, ast_elements)) {
+
+                // Unir los hijos del nodo similar
+                for (TreeNode* grandchild : child->children) {
+                    lastSimilar->children.push_back(grandchild);
+                    const_cast<TreeNode*>(grandchild)->parentNode = lastSimilar;
+                }
+
+                // Eliminar el nodo fusionado
+                it = current->children.erase(it);
+                delete child;
+            } else {
+                // Verificar si este hijo necesita fusionarse con sus propios hijos
+                if (isProtectedNode(child, ast_elements) && !child->children.empty() &&
+                    child->symbol.getNombre() == child->children.front()->symbol.getNombre() &&
+                    isProtectedNode(child->children.front(), ast_elements)) {
+
+                    // Fusionar el hijo con su primer hijo (mismo tipo)
+                    TreeNode* grandchild = child->children.front();
+                    child->children.pop_front();
+
+                    // Mover todos los nietos al hijo
+                    for (TreeNode* ggchild : grandchild->children) {
+                        child->children.push_front(ggchild);
+                        const_cast<TreeNode*>(ggchild)->parentNode = child;
+                    }
+
+                    delete grandchild;
+                }
+
+                mergedChildren.push_back(child);
+                lastSimilar = child;
+                ++it;
+            }
+        }
+
+        current->children = mergedChildren;
+    }
+}
+
+// Función iterativa wrapper para manejar todo el árbol
+void mergeProtectedNodes(TreeNode* root, const std::vector<std::string>& ast_elements) {
+    if (!root) return;
+
+    // Usamos DFS iterativo para evitar posibles problemas de profundidad de recursión
+    std::stack<TreeNode*> nodeStack;
+    std::unordered_set<TreeNode*> processedNodes;
+
+    nodeStack.push(root);
+
+    while (!nodeStack.empty()) {
+        TreeNode* current = nodeStack.top();
+
+        if (processedNodes.count(current)) {
+            // Si ya fue procesado, aplicar las fusiones
+            deepMergeNodes(current, ast_elements);
+            nodeStack.pop();
+        } else {
+            processedNodes.insert(current);
+            // Agregar hijos en orden inverso para procesamiento DFS
+            for (auto it = current->children.rbegin(); it != current->children.rend(); ++it) {
+                nodeStack.push(*it);
+            }
+        }
+    }
 }
 
 void reassignPositiveIds(TreeNode* root, int& currentId) {
@@ -594,7 +688,231 @@ void reassignPositiveIds(TreeNode* root, int& currentId) {
     for (TreeNode* child : root->children) {
         reassignPositiveIds(child, currentId);
     }
+
+
+
 }
+void mergeStmtNodesChained(TreeNode* root) {
+    if (!root) return;
+
+    std::stack<TreeNode*> nodeStack;
+    nodeStack.push(root);
+
+    while (!nodeStack.empty()) {
+        TreeNode* current = nodeStack.top();
+        nodeStack.pop();
+
+        // 1. Verificación exhaustiva del nodo actual
+        if (!current || current->children.empty()) {
+            continue;
+        }
+
+        // 2. Procesamiento seguro de hijos (post-order)
+        for (auto it = current->children.rbegin(); it != current->children.rend(); ++it) {
+            if (*it) {
+                nodeStack.push(*it);
+            } else {
+                // Eliminar hijos nulos inmediatamente
+                current->children.erase(std::next(it).base());
+            }
+        }
+
+        // 3. Procesamiento específico para nodos Stmt
+        if (current->symbol.getNombre() == "Stmt") {
+            std::list<TreeNode*> newChildren;
+            std::list<TreeNode*> stmtChildrenToMerge;
+
+            // 4. Filtrado seguro de hijos
+            for (auto it = current->children.begin(); it != current->children.end(); ) {
+                TreeNode* child = *it;
+                if (!child) {
+                    it = current->children.erase(it);
+                    continue;
+                }
+
+                if (child->symbol.getNombre() == "Stmt") {
+                    stmtChildrenToMerge.push_back(child);
+                    it = current->children.erase(it);
+                } else {
+                    // Garantizar parentNode correcto
+                    const_cast<TreeNode*>(child)->parentNode = current;
+                    newChildren.push_back(child);
+                    ++it;
+                }
+            }
+
+            // 5. Fusión segura de nodos Stmt
+            for (TreeNode* stmtChild : stmtChildrenToMerge) {
+                if (!stmtChild) continue;
+
+                // Copiar profundamente el contenido del hijo Stmt
+                for (TreeNode* grandchild : stmtChild->children) {
+                    if (grandchild) {
+                        // Crear nueva copia del nodo para evitar problemas de referencia
+                        TreeNode* newChild = new TreeNode(
+                            grandchild->symbol.getNombre(),
+                            current,  // parentNode correcto
+                            grandchild->nodeId
+                        );
+                        // Copiar todos los datos importantes
+                        newChild->nullableValue = grandchild->nullableValue;
+                        newChild->children = grandchild->children;
+
+                        // Actualizar parentNode de los nietos
+                        for (TreeNode* ggchild : newChild->children) {
+                            if (ggchild) {
+                                const_cast<TreeNode*>(ggchild)->parentNode = newChild;
+                            }
+                        }
+
+                        newChildren.push_back(newChild);
+                    }
+                }
+
+                // 6. Limpieza segura del nodo fusionado
+                stmtChild->children.clear();
+                delete stmtChild;
+            }
+
+            // 7. Actualización segura de la estructura
+            current->children = newChildren;
+
+            // 8. Reorganización opcional si hay muchos hijos
+            if (current->children.size() > 1) {
+                TreeNode* newStmtContainer = new TreeNode(
+                    "Stmt",
+                    current->parentNode,
+                    -1  // Temporal, se asignará ID después
+                );
+
+                // Transferir hijos al nuevo contenedor
+                for (TreeNode* child : current->children) {
+                    if (child) {
+                        newStmtContainer->children.push_back(child);
+                        const_cast<TreeNode*>(child)->parentNode = newStmtContainer;
+                    }
+                }
+
+                current->children.clear();
+                current->children.push_back(newStmtContainer);
+            }
+        }
+    }
+}
+
+// --- Función independiente para aplanar Stmts encadenados ---
+// Modifica el árbol de parseo in-place.
+void flattenChainedStmts(TreeNode* root) {
+    if (!root) return;
+
+    // Usaremos un stack para un recorrido DFS en post-orden
+    // (procesar hijos antes que el nodo actual).
+    std::stack<TreeNode*> s1; // Para el orden de visita (pre-orden)
+    std::stack<TreeNode*> s2; // Para el orden post-orden
+
+    s1.push(root);
+
+    // Primera pasada: construir el orden post-orden
+    while (!s1.empty()) {
+        TreeNode* current = s1.top();
+        s1.pop();
+        s2.push(current);
+
+        // Los hijos se empujan en orden inverso para que al sacarlos de s2
+        // se procesen de izquierda a derecha (útil para ciertas operaciones, aunque no estricto aquí).
+        for (auto it = current->children.rbegin(); it != current->children.rend(); ++it) {
+            s1.push(*it);
+        }
+    }
+
+    // Segunda pasada: procesar nodos en post-orden para aplicar el aplanamiento
+    while (!s2.empty()) {
+        TreeNode* current = s2.top();
+        s2.pop();
+
+        // No necesitamos `newChildrenForCurrent` a este nivel si solo modificamos
+        // la lista de hijos del Stmt "cabeza" de la cadena.
+        // La iteración sobre current->children es para encontrar el Stmt "cabeza".
+
+        // Iteramos sobre los hijos de 'current'. Buscamos un 'Stmt' que sea la 'cabeza' de una cadena.
+        for (auto it = current->children.begin(); it != current->children.end(); ) {
+            TreeNode* child = *it;
+
+            if (child->symbol.getNombre() == "Stmt") {
+                // Verificar si este Stmt 'child' es la cabeza de una cadena:
+                // Si tiene un 'Stmt' como su último hijo.
+                TreeNode* lastGrandchild = nullptr;
+                if (!child->children.empty()) {
+                    lastGrandchild = child->children.back();
+                }
+
+                if (lastGrandchild && lastGrandchild->symbol.getNombre() == "Stmt") {
+                    // ¡Patrón de cadena encontrado! `child` (Stmt cabeza) -> ... -> `lastGrandchild` (Stmt cola)
+                    // Queremos que 'child' absorba el contenido de 'lastGrandchild' y los Stmt subsiguientes.
+
+                    // Extraer todos los Stmt de la cadena y sus contenidos, y añadirlos al 'child' original.
+                    TreeNode* currentStmtInChain = lastGrandchild; // Empezamos desde la cola
+                    std::list<TreeNode*> accumulatedStmtContents; // Para acumular los hijos de los Stmt de la cola
+
+                    // Primer paso: quitar el 'lastGrandchild' de los hijos de 'child'.
+                    child->children.pop_back();
+
+                    // Recorrer la cadena a partir del 'lastGrandchild' (la cola del primer Stmt)
+                    while (currentStmtInChain && currentStmtInChain->symbol.getNombre() == "Stmt") {
+                        TreeNode* nextStmtInChain = nullptr;
+
+                        // Separar los hijos de contenido de 'currentStmtInChain' de su posible 'nextStmtInChain'
+                        std::list<TreeNode*> currentStmtContents;
+                        for (TreeNode* gc : currentStmtInChain->children) {
+                            if (gc->symbol.getNombre() == "Stmt") {
+                                nextStmtInChain = gc;
+                            } else {
+                                currentStmtContents.push_back(gc);
+                            }
+                        }
+
+                        // Añadir los hijos de contenido de currentStmtInChain a la lista acumulada
+                        for (TreeNode* contentChild : currentStmtContents) {
+                            accumulatedStmtContents.push_back(contentChild);
+                            // Actualizar parentNode, casteando de forma segura
+                            const_cast<TreeNode*>(contentChild)->parentNode = child;
+                        }
+
+                        // ¡MUY IMPORTANTE! Desvincular los hijos del Stmt que vamos a borrar.
+                        // Si no hacemos esto, el destructor de currentStmtInChain intentará borrar
+                        // los nodos de contenido que ya hemos movido y reasignado.
+                        currentStmtInChain->children.clear();
+
+                        // Ahora podemos eliminar el nodo Stmt intermedio.
+                        TreeNode* stmtToDelete = currentStmtInChain;
+                        currentStmtInChain = nextStmtInChain;
+                        delete stmtToDelete; // Libera la memoria del nodo Stmt intermedio
+                    }
+
+                    // Después de recolectar todos los contenidos de la cadena, añadirlos al 'child' original
+                    for (TreeNode* collectedChild : accumulatedStmtContents) {
+                        child->children.push_back(collectedChild);
+                    }
+
+                    // El iterador no avanza aquí porque 'child' no se ha eliminado,
+                    // sino que se ha modificado in-place. La siguiente iteración
+                    // del bucle 'for' para 'current->children' seguirá desde el mismo punto.
+                    // Si eliminamos child, deberíamos usar it = current->children.erase(it);
+                    // Pero aquí solo modificamos sus hijos, así que ++it está bien.
+                    ++it;
+                } else {
+                    // Este Stmt 'child' no es la cabeza de una cadena (no tiene un Stmt como último hijo).
+                    // Simplemente avanzamos.
+                    ++it;
+                }
+            } else {
+                // No es un Stmt, simplemente avanzamos.
+                ++it;
+            }
+        } // Fin del bucle for sobre los hijos de 'current'
+    }
+}
+
 // Función de conveniencia para ejecutar_todo el prooce
 TreeNode* processAST(TreeNode* root, const std::vector<std::string>& ast_elements) {
     // Paso 1: Calcular profundidades iniciales
@@ -602,7 +920,12 @@ TreeNode* processAST(TreeNode* root, const std::vector<std::string>& ast_element
 
     // Paso 2: Simplificar el AST
     //return simplifyAST(root, ast_elements);
-    return simplifyToBinaryAST(root, ast_elements, idconter);
+   TreeNode* simplified =  simplifyToBinaryAST(root, ast_elements, idconter);
+    //mergeProtectedNodes(simplified, ast_elements);
+    flattenChainedStmts(root);
+    //mergeStmtNodesChained(root);
+    //reassignPositiveIds(root, idconter);
+    return root;
 }
 
 TreeNode* Parser::parsing() {
@@ -738,7 +1061,7 @@ TreeNode* Parser::parsing() {
                 for (auto it= production_to_stack.rbegin();it !=  production_to_stack.rend(); ++it) {
                     auto child = new TreeNode(it->getNombre(), currentParent, id++);
                     treeNodesStack.push(child);
-                    currentParent->children.push_front(child);
+                    currentParent->children.push_back(child);
                 }
                 // -----------------------------
                 printStack(stackParser);
