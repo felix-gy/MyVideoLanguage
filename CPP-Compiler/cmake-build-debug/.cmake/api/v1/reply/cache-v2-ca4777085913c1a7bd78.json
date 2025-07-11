@@ -1315,7 +1315,19 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "[C:/Users/gordi/AppData/Local/Programs/Python/Python313/libs/python313.lib][C:/Users/gordi/AppData/Local/Programs/Python/Python313/include][cfound components: Development Development.Module Development.Embed ][v3.13.2()]"
+			"value" : "[C:/Python310/libs/python310.lib][C:/Python310/include][cfound components: Development Development.Module Development.Embed ][v3.10.0()]"
+		},
+		{
+			"name" : "Python_ROOT_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "No help, variable specified on the command line."
+				}
+			],
+			"type" : "UNINITIALIZED",
+			"value" : "C:/Python310"
 		},
 		{
 			"name" : "_CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED",
@@ -1363,7 +1375,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "ffc91a08a5b57150a229268f60e0553c"
+			"value" : "c6771ac83eac1b7c2b8f34a86a07c172"
 		},
 		{
 			"name" : "_Python_DEVELOPMENT_MODULE_SIGNATURE",
@@ -1375,7 +1387,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "ffc91a08a5b57150a229268f60e0553c"
+			"value" : "c6771ac83eac1b7c2b8f34a86a07c172"
 		},
 		{
 			"name" : "_Python_Development_REASON_FAILURE",
@@ -1399,7 +1411,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Users/gordi/AppData/Local/Programs/Python/Python313/include"
+			"value" : "C:/Python310/include"
 		},
 		{
 			"name" : "_Python_Interpreter_REASON_FAILURE",
@@ -1435,7 +1447,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Users/gordi/AppData/Local/Programs/Python/Python313/libs/python313.lib"
+			"value" : "C:/Python310/libs/python310.lib"
 		},
 		{
 			"name" : "_Python_NumPy_REASON_FAILURE",
@@ -1459,7 +1471,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Users/gordi/AppData/Local/Programs/Python/Python313/python313.dll"
+			"value" : "C:/Python310/python310.dll"
 		}
 	],
 	"kind" : "cache",

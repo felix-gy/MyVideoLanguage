@@ -30,25 +30,25 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 13,
+				"line" : 17,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 29,
+				"line" : 35,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 30,
+				"line" : 36,
 				"parent" : 0
 			},
 			{
 				"command" : 3,
 				"file" : 0,
-				"line" : 28,
+				"line" : 34,
 				"parent" : 0
 			}
 		]
@@ -66,7 +66,7 @@
 			[
 				{
 					"backtrace" : 4,
-					"path" : "C:/Users/gordi/AppData/Local/Programs/Python/Python313/include"
+					"path" : "C:/Python310/include"
 				}
 			],
 			"language" : "CXX",
@@ -103,12 +103,12 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-LC:\\Users\\gordi\\AppData\\Local\\Programs\\Python\\Python313\\libs\\python313.lib",
+				"fragment" : "-LC:\\Python310\\libs\\python310.lib",
 				"role" : "libraryPath"
 			},
 			{
 				"backtrace" : 3,
-				"fragment" : "C:\\Users\\gordi\\AppData\\Local\\Programs\\Python\\Python313\\libs\\python313.lib",
+				"fragment" : "C:\\Python310\\libs\\python310.lib",
 				"role" : "libraries"
 			},
 			{

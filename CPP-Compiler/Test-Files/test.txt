@@ -1,26 +1,28 @@
 
-video1:Video = load("video.mp4");
-video2:Video = load("video_22.mp4");
+video1:Video = load("video1.mp4");
+video2:Video = load("video2.mp4");
 
-timepo1:Time = 00:01:00;
-timepo2clip:Time = 00:05:00;
+timepo1:Time = 00:00:00;
+timepo2clip:Time = 00:02:00;
 
 first:Int = 5;
-second:Int = 10;
+second:Int = 10 + 2 + 3 +5;
 
 if (first neq second) then
     print("Son diferentes");
 end
 
 videoRecortado =  clip(video1, timepo1, timepo2clip);
-videoConcatenado:Video = videoRecortado ++ video2;
+video2 = clip(video2, timepo1, timepo2clip);
+video3:Video = speed(video2, 2);
+videoFinal:Video = videoRecortado >> video3;
 
-videoFinal:Video = speed( videoConcatenado, 2);
+% videoFinal:Video = speed( videoConcatenado, 2);
 replay (i in 3) then
     print("Iteración");
 end
 
-durationTime:Time = duration(videoFinal);
-
+% durationTime:Time = duration(videoFinal);
+% var_s:String = HResolution(videoFinal);
 export(videoFinal, "videoFinal.mp4");
 

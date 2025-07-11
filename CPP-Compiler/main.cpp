@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <cstdio>
 #include "Scanner.h"
 #include "Parser.h"
 #include "PythonCodeGenerator.h"
@@ -53,5 +54,55 @@ int main() {
     generator.guardarEnArchivo("output_video.py");
 
     cout << "Código Python generado en 'output_video.py'\n";
+
+    wchar_t* program = Py_DecodeLocale("C:/Python310/python.exe", nullptr);
+    Py_SetProgramName(program);
+    // 1. Inicializar el intérprete de Python
+    Py_Initialize();
+
+    if (!Py_IsInitialized()) {
+        std::cerr << "Error: No se pudo inicializar el intérprete de Python." << std::endl;
+        return 1;
+    }
+
+    // Añadir el directorio actual al PYTHONPATH
+    //PyRun_SimpleString("import sys\nsys.path.append('./')");
+    //PyRun_SimpleString("import sys; print('Python ejecutándose desde:', sys.executable)");
+    PyRun_SimpleString(R"(
+import sys)");
+
+
+
+    // Importar el módulo Python
+    PyObject* pName = PyUnicode_DecodeFSDefault("output_video");
+    PyObject* pModule = PyImport_Import(pName);
+    Py_DECREF(pName);
+    /*
+    if (pModule != nullptr) {
+        // Obtener la función process_video
+        PyObject* pFunc = PyObject_GetAttrString(pModule, "process_video");
+
+        // Verificar si es callable
+        if (pFunc && PyCallable_Check(pFunc)) {
+            PyObject* pValue = PyObject_CallObject(pFunc, nullptr);
+            Py_XDECREF(pValue);
+        } else {
+            PyErr_Print();
+            std::cerr << "No se pudo encontrar la función 'process_video'" << std::endl;
+        }
+
+        Py_XDECREF(pFunc);
+        Py_DECREF(pModule);
+    } else {
+        PyErr_Print();
+        std::cerr << "No se pudo cargar el módulo 'video_info'" << std::endl;
+    }
+    */
+
+    // Finalizar Python
+    if (Py_FinalizeEx() < 0) {
+        std::cerr << "Error al finalizar Python" << std::endl;
+        return 1;
+    }
     return 0;
 }

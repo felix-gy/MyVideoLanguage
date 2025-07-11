@@ -100,9 +100,10 @@ void PythonCodeGenerator::generarDesdePrograma(TreeNode* root) {
 
 
 
-    output << "# Código generado automáticamente desde lenguaje de compilador\n";
-    output << "from moviepy.editor import *\n";
+    output << "# Código del Compilador C++\n";
+    output << "from moviepy import *\n";
     output << "from moviepy.video.fx import *\n";
+    output << "import math\n";
     output << "import os \n\n";
 
 
@@ -178,13 +179,18 @@ void PythonCodeGenerator::inicializarGeneradores(){
             std::string t2 = (*it)->nullableValue; ++it;
             std::string t1 = (*it)->nullableValue; ++it;
             std::string source = (*it)->nullableValue;
-            return  source + ".subclip(" + t1 + ", " + t2 + ")";
+            return  source + ".subclipped(" + t1 + ", " + t2 + ")";
         }},
         {"speed", [this](TreeNode* node, int ident) {
+            std::ostringstream speed_res;
             auto it = node->children.begin();
             std::string factor = (*it)->nullableValue; ++it;
             std::string video = (*it)->nullableValue;
-            return video +".speedx(" + factor + ")";
+            speed_res << video +".with_effects([vfx.MultiplySpeed(" + factor + ")]) \n";
+            return speed_res.str();
+            //speed_res << video +".time_transform(lambda t: t * " + factor + ") \n";
+            //speed_res << video + " = " + video +".set_duration("+""
+            //videoFinal = videoFinal.set_duration(videoConcatenado.duration * 2)
         }},
         {"++", [this](TreeNode* node, int ident) {
             auto it = node->children.begin();
@@ -193,26 +199,50 @@ void PythonCodeGenerator::inicializarGeneradores(){
             return "concatenate_videoclips([" + right + ", " + left + "])";
         }},
         {">>", [this](TreeNode* node, int ident) {
+
             auto it = node->children.begin();
-            std::string a = (*it)->nullableValue; ++it;
-            std::string b = (*it)->nullableValue;
-            return "concatenate_videoclips([" + b + ".crossfadeout(1), " + a + ".crossfadein(1)])";
+            std::string b_var_name = (*it)->nullableValue; ++it;  // Segundo clip (entra)
+            std::string a_var_name = (*it)->nullableValue;        // Primer clip (sale)
+
+            std::string transition_duration = "3"; // Ajustable: duración en segundos de la transición
+
+            std::ostringstream python_expression;
+            python_expression << "CompositeVideoClip([\n";
+
+            // Primer clip: se desliza hacia la izquierda al final
+            python_expression << this->indentar(ident + 1)
+                              << a_var_name << ".with_effects([vfx.SlideOut("
+                              << transition_duration << ", side='left')]),\n";
+
+            // Segundo clip: entra desde la derecha justo antes del final del primero
+            python_expression << this->indentar(ident + 1)
+                              << b_var_name << ".with_start("
+                              << a_var_name << ".duration - "
+                              << transition_duration << ").with_effects([vfx.SlideIn("
+                              << transition_duration << ", side='right')]),\n";
+
+            python_expression << this->indentar(ident) << "])";
+
+            return python_expression.str();
         }},
         {"export", [this](TreeNode* node, int ident) {
             auto it = node->children.begin();
             std::string string_out = (*it)->nullableValue; ++it;
             std::string id_name = (*it)->nullableValue;
-            return id_name + ".write_videofile(\"" + string_out + "\", codec='libx264', audio_codec='aac')";
+            return id_name + ".write_videofile(\"" + string_out + "\")";
+            //return id_name + ".write_videofile(\"" + string_out + "\", codec='libx264', audio_codec='aac')";
+
         }},
         {"duration", [this](TreeNode* node, int ident) {
             auto it = node->children.begin();
             std::string video = (*it)->nullableValue;
-            return "str("+ video +".duration)";
+            return "("+ video +".duration)";
         }},
         {"WResolution", [this](TreeNode* node, int ident) {
             std::ostringstream res_WResolution;
             auto it = node->children.begin();
             std::string video = (*it)->nullableValue;
+            //res_WResolution << "print(f\"Ancho ( "<<video<< " ) : { " << video << ".w }\")";
             res_WResolution << "print(f\"Ancho ( "<<video<< " ) : { " << video << ".w }\")";
             return res_WResolution.str();
         }},
@@ -220,7 +250,7 @@ void PythonCodeGenerator::inicializarGeneradores(){
             std::ostringstream res_HResolution;
             auto it = node->children.begin();
             std::string video = (*it)->nullableValue;
-            res_HResolution << "print(f\"Ancho ( "<<video<< " ) : { " << video << ".h }\")";
+            //res_HResolution << "print(f\"Ancho ( "<<video<< " ) : { " << video << ".h }\")";
             return res_HResolution.str();
         }},
         {"Format", [this](TreeNode* node, int ident) {
@@ -264,26 +294,95 @@ void PythonCodeGenerator::inicializarGeneradores(){
         }},
         {"eq", [this](TreeNode* node, int ident) {
             auto it = node->children.begin();
-            std::string left = (*it)->nullableValue; ++it;
-            std::string right = (*it)->nullableValue;
+            std::string left;
+            if ((*it)->isVar())
+            {
+                left = (*it)->nullableValue;
+            }
+            else
+            {
+                left = generadores[(*it)->symbol.getNombre() ](*it, ident);
+            }
+            ++it;
+            std::string right;
+            if ((*it)->isVar())
+            {
+                right = (*it)->nullableValue;
+            }
+            else
+            {
+                right = generadores[(*it)->symbol.getNombre() ](*it, ident);
+            }
+            //std::string right = (*it)->nullableValue;
             return right + " == " + left;
         }},
         {"neq", [this](TreeNode* node, int ident) {
             auto it = node->children.begin();
-            std::string left = (*it)->nullableValue; ++it;
-            std::string right = (*it)->nullableValue;
+            std::string left;
+            if ((*it)->isVar())
+            {
+                left = (*it)->nullableValue;
+            }
+            else
+            {
+                left = generadores[(*it)->symbol.getNombre() ](*it, ident);
+            }
+            ++it;
+            std::string right;
+            if ((*it)->isVar())
+            {
+                right = (*it)->nullableValue;
+            }
+            else
+            {
+                right = generadores[(*it)->symbol.getNombre() ](*it, ident);
+            }
             return right + " != " + left;
         }},
         {">", [this](TreeNode* node, int ident) {
             auto it = node->children.begin();
-            std::string left = (*it)->nullableValue; ++it;
-            std::string right = (*it)->nullableValue;
+            std::string left;
+            if ((*it)->isVar())
+            {
+                left = (*it)->nullableValue;
+            }
+            else
+            {
+                left = generadores[(*it)->symbol.getNombre() ](*it, ident);
+            }
+            ++it;
+            std::string right;
+            if ((*it)->isVar())
+            {
+                right = (*it)->nullableValue;
+            }
+            else
+            {
+                right = generadores[(*it)->symbol.getNombre() ](*it, ident);
+            }
             return right + " > " + left;
         }},
         {"<", [this](TreeNode* node, int ident) {
             auto it = node->children.begin();
-            std::string left = (*it)->nullableValue; ++it;
-            std::string right = (*it)->nullableValue;
+            std::string left;
+            if ((*it)->isVar())
+            {
+                left = (*it)->nullableValue;
+            }
+            else
+            {
+                left = generadores[(*it)->symbol.getNombre() ](*it, ident);
+            }
+            ++it;
+            std::string right;
+            if ((*it)->isVar())
+            {
+                right = (*it)->nullableValue;
+            }
+            else
+            {
+                right = generadores[(*it)->symbol.getNombre() ](*it, ident);
+            }
             return right + " > " + left;
         }},
         {"+", [this](TreeNode* node, int ident) {
@@ -292,11 +391,25 @@ void PythonCodeGenerator::inicializarGeneradores(){
             {
                 if (std::next(it) == node->children.end())
                 {
-                    res +=  (*it)->nullableValue;
+                    if ((*it)->isVar())
+                    {
+                        res +=  (*it)->nullableValue;
+                    }
+                    else
+                    {
+                        res+= generadores[(*it)->symbol.getNombre() ](*it, ident);
+                    }
                 }
                 else
                 {
-                    res +=  (*it)->nullableValue + " + ";
+                    if ((*it)->isVar())
+                    {
+                        res +=  (*it)->nullableValue +  " + ";
+                    }
+                    else
+                    {
+                        res+= generadores[(*it)->symbol.getNombre() ](*it, ident) +  " + ";
+                    }
                 }
             }
             return res;
@@ -307,11 +420,25 @@ void PythonCodeGenerator::inicializarGeneradores(){
             {
                 if (std::next(it) == node->children.end())
                 {
-                    res +=  (*it)->nullableValue;
+                    if ((*it)->isVar())
+                    {
+                        res +=  (*it)->nullableValue;
+                    }
+                    else
+                    {
+                        res+= generadores[(*it)->symbol.getNombre() ](*it, ident);
+                    }
                 }
                 else
                 {
-                    res +=  (*it)->nullableValue + " - ";
+                    if ((*it)->isVar())
+                    {
+                        res +=  (*it)->nullableValue +  " - ";
+                    }
+                    else
+                    {
+                        res+= generadores[(*it)->symbol.getNombre() ](*it, ident) +  " - ";
+                    }
                 }
             }
             return res;
